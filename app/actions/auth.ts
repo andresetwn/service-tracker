@@ -40,8 +40,7 @@ async function getSupabaseAdmin() {
 // =============================================================================
 // OTP 6-digit — dikelola sendiri di public.otp_codes (bukan email Supabase).
 // Alasan: SMTP free tier membatasi ~3-4 email/jam dan sering tidak sampai.
-//   dev  : kode tampil di log server + dilayar (NEXT_PUBLIC_OTP_DEV_MODE=1)
-//   prod : kirim lewat Resend — tinggal isi sendOtp() (gratis 3.000/bulan)
+// Kode dikirim lewat Gmail SMTP (lihat lib/email.ts cara setup).
 // =============================================================================
 
 const OTP_TTL_MINUTES = 10;
@@ -53,21 +52,6 @@ function generateOtpCode(): string {
 }
 
 async function sendOtp(email: string, code: string): Promise<void> {
-  const devMode = process.env.NEXT_PUBLIC_OTP_DEV_MODE === "1";
-
-  if (devMode) {
-    // DEV: tampilkan di log server + kirim juga ke email kalau SMTP sudah
-    // dikonfigurasi (supaya alur bisa diuji tanpa email sungguhan).
-    console.log(`\n[OTP][DEV] email=${email} code=${code}\n`);
-    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-      await sendOtpEmail(email, code).catch((err) =>
-        console.error("[OTP][DEV] kirim email gagal:", err.message)
-      );
-    }
-    return;
-  }
-
-  // PROD: kirim via Gmail SMTP (lihat lib/email.ts cara setup).
   await sendOtpEmail(email, code);
 }
 
@@ -155,14 +139,12 @@ export type AuthResult =
       error: string;
       userId?: never;
       needsOtp?: never;
-      devCode?: never;
       policeNumber?: never;
     }
   | {
       error?: never;
       userId?: string;
       needsOtp: boolean;
-      devCode?: string;
       policeNumber?: string;
     };
 
@@ -300,13 +282,11 @@ export async function registerAction(formData: FormData): Promise<AuthResult> {
     // Kirim OTP 6-digit milik kita (tabel otp_codes). Tidak pakai email
     // bawaan Supabase karena SMTP free tier membatasi ~3-4 email/jam.
     const { code: otpCode } = await issueOtp(email, "signup");
-    const devMode = process.env.NEXT_PUBLIC_OTP_DEV_MODE === "1";
 
     revalidatePath("/masuk");
     return {
       userId: userId,
       needsOtp: true,
-      devCode: devMode ? otpCode : undefined,
       policeNumber,
     } as AuthResult;
   } catch (err) {

@@ -33,7 +33,6 @@ export function RegisterForm() {
     }
 
     const email = String(formData.get("email") ?? "");
-    const devCode = "devCode" in result && result.devCode ? result.devCode : null;
     const policeNumber =
       "policeNumber" in result && result.policeNumber
         ? result.policeNumber
@@ -41,7 +40,7 @@ export function RegisterForm() {
     router.push(
       `/verifikasi?email=${encodeURIComponent(email)}&plat=${encodeURIComponent(
         policeNumber
-      )}${devCode ? `&dev=${encodeURIComponent(devCode)}` : ""}${
+      )}${
         searchParams.get("redirect")
           ? `&redirect=${encodeURIComponent(searchParams.get("redirect")!)}`
           : ""

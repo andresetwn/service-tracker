@@ -16,7 +16,6 @@ export function VerifyForm() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
   const redirect = searchParams.get("redirect") ?? "/";
-  const devCode = searchParams.get("dev") ?? null;
   const plat = searchParams.get("plat") ?? "";
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -76,20 +75,6 @@ export function VerifyForm() {
 
           <input type="hidden" name="email" value={email} />
           <input type="hidden" name="police_number" value={plat} />
-
-          {devCode ? (
-            <div className="rounded-lg border border-dashed border-line bg-slate-50 px-3 py-3 text-center">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                Mode Dev — Kode Verifikasi
-              </p>
-              <p className="mt-1 font-mono text-2xl font-bold tracking-[0.3em] text-foreground">
-                {devCode}
-              </p>
-              <p className="mt-1 text-xs text-muted">
-                Hanya tampil di lingkungan pengembangan.
-              </p>
-            </div>
-          ) : null}
 
           <Field label="Kode Verifikasi" required>
             <Input
