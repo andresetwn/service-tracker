@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/**
+ * Brand color palette (AGENTS.md #WARNA).
+ * Professional automotive dashboard look: blue as the main brand color,
+ * slate neutrals, minimal accents, good contrast.
+ *
+ * The `@theme` block maps the --color-* tokens to real Tailwind utilities,
+ * so `bg-brand`, `text-brand`, `border-brand`, etc. are available everywhere
+ * while the values stay defined in one place.
+ */
+@theme {
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-foreground: #0f172a;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+
+  --color-brand: #2563eb;
+  --color-brand-hover: #1d4ed8;
+  --color-brand-soft: #eff6ff;
+
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
